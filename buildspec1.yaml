@@ -1,13 +1,14 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
-      java: corretto17  # Updated runtime version
+      java: corretto17
 
   pre_build:
     commands:
-      - yum update -y     # Equivalent to apt-get update
-      - yum install -y jq # Install jq using yum package manager
+      - yum update -y
+      - yum install -y jq
       - retry_count=3
       - for i in $(seq 1 $retry_count); do wget https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz && break || sleep 10; done
       - tar xzf apache-maven-3.5.4-bin.tar.gz || true
@@ -19,8 +20,7 @@ phases:
 
   build:
     commands:
-      - find / -name pom.xml -exec mv {} ./pom.xml \; || true  # Move all pom.xml files to root
+      - find / -name pom.xml -exec mv {} ./pom.xml \; || true
       - mvn sonar:sonar -Dsonar.login=4967ec84ef607a86edbc9a421b243733b78c27bd -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.projectKey=ImaadThouheed_dev-project-real -Dsonar.organization=imaadthouheed
       - sleep 5
-      # Check the HTTP response status code directly
       - if curl -s -o /dev/null -w "%{http_code}" https://sonarcloud.io/api/qualitygates/project_status?projectKey=ImaadThouheed_dev-project-real != "200"; then exit 1; fi

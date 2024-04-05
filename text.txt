@@ -1,0 +1,20 @@
+python -m venv env
+
+.\env\Scripts\activate
+
+
+pip install django
+
+django-admin startproject myproject
+
+
+cd myproject
+python manage.py startapp myapp
+
+
+python manage.py migrate
+
+python manage.py createsuperuser
+
+
+python manage.py runserver
